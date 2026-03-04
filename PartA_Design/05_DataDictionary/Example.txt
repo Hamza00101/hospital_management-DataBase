@@ -1,1 +1,62 @@
 
+1️⃣ Patient Table
+Attribute	Data Type	PK	FK	Null	Constraints	Description
+PatientID	INT (Identity)	✔		NO	Primary Key	Unique patient identifier
+FirstName	VARCHAR(50)			NO		Patient first name
+LastName	VARCHAR(50)			NO		Patient last name
+DateOfBirth	DATE			NO		Patient date of birth
+Gender	VARCHAR(10)			NO	CHECK	Male/Female/Other
+Phone	VARCHAR(15)			NO		Contact number
+Email	VARCHAR(100)			YES	UNIQUE	Email address
+AddressLine	VARCHAR(255)			NO		Home address
+Eircode	VARCHAR(10)			NO		Postal code
+2️⃣ Department Table
+Attribute	Data Type	PK	FK	Null	Constraints	Description
+DepartmentID	INT (Identity)	✔		NO	Primary Key	Unique department ID
+DepartmentName	VARCHAR(100)			NO	UNIQUE	Name of department
+Phone	VARCHAR(15)			NO		Department contact
+Location	VARCHAR(100)			NO		Physical location
+3️⃣ Doctor Table
+Attribute	Data Type	PK	FK	Null	Constraints	Description
+DoctorID	INT (Identity)	✔		NO	Primary Key	Unique doctor ID
+FirstName	VARCHAR(50)			NO		Doctor first name
+LastName	VARCHAR(50)			NO		Doctor last name
+Specialization	VARCHAR(100)			NO		Medical specialty
+Phone	VARCHAR(15)			NO		Contact number
+Email	VARCHAR(100)			NO	UNIQUE	Email address
+DepartmentID	INT		✔	NO	Foreign Key	Linked department
+4️⃣ Appointment Table
+Attribute	Data Type	PK	FK	Null	Constraints	Description
+AppointmentID	INT (Identity)	✔		NO	Primary Key	Unique appointment ID
+AppointmentDateTime	DATETIME2			NO		Appointment date/time
+Status	VARCHAR(20)			NO	CHECK	Scheduled/Completed/Cancelled
+PatientID	INT		✔	NO	Foreign Key	Linked patient
+DoctorID	INT		✔	NO	UNIQUE (DoctorID, DateTime)	Linked doctor
+5️⃣ Admission Table
+Attribute	Data Type	PK	FK	Null	Constraints	Description
+AdmissionID	INT (Identity)	✔		NO	Primary Key	Unique admission ID
+AdmissionDate	DATETIME2			NO		Admission start
+DischargeDate	DATETIME2			YES	CHECK	Must be ≥ AdmissionDate
+Diagnosis	VARCHAR(255)			NO		Diagnosis details
+RoomNumber	VARCHAR(10)			NO		Room assigned
+PatientID	INT		✔	NO	Foreign Key	Linked patient
+DoctorID	INT		✔	NO	Foreign Key	Responsible doctor
+6️⃣ Prescription Table
+Attribute	Data Type	PK	FK	Null	Constraints	Description
+PrescriptionID	INT (Identity)	✔		NO	Primary Key	Unique prescription ID
+PrescriptionDate	DATETIME2			NO		Date issued
+MedicationName	VARCHAR(100)			NO		Medicine name
+Dosage	VARCHAR(50)			NO		Dosage information
+Frequency	VARCHAR(50)			NO		Frequency instructions
+DurationDays	INT			NO		Number of days
+Notes	VARCHAR(255)			YES		Additional notes
+AdmissionID	INT		✔	NO	Foreign Key	Linked admission
+DoctorID	INT		✔	NO	Foreign Key	Prescribing doctor
+7️⃣ Payment Table
+Attribute	Data Type	PK	FK	Null	Constraints	Description
+PaymentID	INT (Identity)	✔		NO	Primary Key	Unique payment ID
+Amount	DECIMAL(10,2)			NO		Payment amount
+PaymentDate	DATETIME2			NO		Date of payment
+PaymentMethod	VARCHAR(20)			NO	CHECK	Cash/Card/Insurance/Online
+PaymentStatus	VARCHAR(20)			NO	CHECK	Pending/Completed/Failed
+AdmissionID	INT		✔	NO	Foreign Key	Linked admission
