@@ -1,5 +1,0 @@
-CREATE DATABASE HospitalDB;
-GO
-
-USE HospitalDB;
-GO
