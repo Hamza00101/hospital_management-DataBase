@@ -1,4 +1,11 @@
-CREATE VIEW PatientAdmissionHistory AS
+/*Drop View if already exist*/
+
+DROP view IF EXISTS PatientAdmissionHistory;
+GO
+
+
+
+/*CREATE VIEW PatientAdmissionHistory AS
 SELECT 
     P.FirstName,
     P.LastName,
@@ -8,7 +15,11 @@ SELECT
     A.RoomNumber
 FROM Admission A
 JOIN Patient P
-ON A.PatientID = P.PatientID;
+ON A.PatientID = P.PatientID;*/
+
+/*SELECT name, type_desc
+FROM sys.objects
+WHERE name = 'PatientAdmissionHistory';*/
 
 -- to use it 
 -- SELECT * FROM PatientAdmissionHistory;
