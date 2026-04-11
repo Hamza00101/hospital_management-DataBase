@@ -47,3 +47,34 @@ WHERE AdmissionID = 3;
 INSERT INTO Admission (AdmissionDate, DischargeDate, Diagnosis, RoomNumber, PatientID, DoctorID)
 VALUES ('2026-04-04', '2026-04-07', 'Different Patient', 'Z101', 3, 1);
 
+--A doctor cannot have two appointments at the same time.
+CREATE TRIGGER TRG_PreventDoctorDoubleBooking
+ON Appointment
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM Appointment a
+        JOIN inserted i
+            ON a.DoctorID = i.DoctorID
+            AND a.AppointmentDateTime = i.AppointmentDateTime
+            AND a.AppointmentID <> i.AppointmentID
+    )
+    BEGIN
+        RAISERROR ('Doctor is already booked at this time.', 16, 1)
+        ROLLBACK TRANSACTION
+    END
+END
+
+--ALTER TABLE Appointment
+--ADD CONSTRAINT DF_Appointment_Status
+--DEFAULT 'Scheduled' FOR Status;
+
+-- First insert (works)
+INSERT INTO Appointment (PatientID, DoctorID, AppointmentDateTime)
+VALUES (1, 1, '2026-04-20 10:00')
+
+-- Second insert (should FAIL)
+INSERT INTO Appointment (PatientID, DoctorID, AppointmentDateTime)
+VALUES (2, 1, '2026-04-20 10:00')
