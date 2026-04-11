@@ -25,6 +25,8 @@ END;
 INSERT INTO Admission (AdmissionDate, DischargeDate, Diagnosis, RoomNumber, PatientID, DoctorID)
 VALUES ('2026-04-06', '2026-04-08', 'Follow-up', 'A102', 1, 1);
 
+select * from Admission
+
 -- Overlaps with existing (1 Apr – 5 Apr)
 
 INSERT INTO Admission (AdmissionDate, DischargeDate, Diagnosis, RoomNumber, PatientID, DoctorID)
