@@ -29,17 +29,55 @@ END;
 '10 River Road',
 'D02AB12'; */
 
--- Create Appointments
-CREATE PROCEDURE CreateAppointment
-@DateTime DATETIME2,
-@Status VARCHAR(20),
-@PatientID INT,
-@DoctorID INT
-AS
-BEGIN
-    INSERT INTO Appointment
-    (AppointmentDateTime, Status, PatientID, DoctorID)
-    VALUES
-    (@DateTime, @Status, @PatientID, @DoctorID);
-END;
 
+
+
+
+
+
+
+---- Create Appointments
+--CREATE PROCEDURE CreateAppointment
+--@DateTime DATETIME2,
+--@Status VARCHAR(20),
+--@PatientID INT,
+--@DoctorID INT
+--AS
+--BEGIN
+--    INSERT INTO Appointment
+--    (AppointmentDateTime, Status, PatientID, DoctorID)
+--    VALUES
+--    (@DateTime, @Status, @PatientID, @DoctorID);
+--END;
+
+
+--EXEC CreateAppointment 
+--    @DateTime = '2026-04-12 10:30:00',
+--    @Status = 'Scheduled',
+--    @PatientID = 1,
+--    @DoctorID = 2;
+
+
+
+
+
+
+
+
+----create procedure to get appointment in xml format
+
+--CREATE PROCEDURE GetAppointmentsXML
+--AS
+--BEGIN
+--    SELECT 
+--        a.AppointmentID,
+--        p.FirstName + ' ' + p.LastName AS PatientName,
+--        d.FirstName + ' ' + d.LastName AS DoctorName,
+--        a.AppointmentDateTime
+--    FROM Appointment a
+--    JOIN Patient p ON a.PatientID = p.PatientID
+--    JOIN Doctor d ON a.DoctorID = d.DoctorID
+--    FOR XML PATH('Appointment'), ROOT('Appointments')
+--END
+
+--EXEC GetAppointmentsXML
