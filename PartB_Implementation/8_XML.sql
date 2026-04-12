@@ -63,10 +63,10 @@ END;
 EXEC GetAllPatientsXML;
 
 -- Search patients with condition
-EXEC SearchPatientByCondition 'Diabetes';
+EXEC SearchPatientByCondition 'Asthma';
 
 -- Update patient condition
-EXEC UpdatePatientXML 1, 'Asthma';
+EXEC UpdatePatientXML 5, 'Asthma';
 
 -- Verify result
 SELECT * FROM Patient;
