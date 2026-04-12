@@ -1,56 +1,72 @@
---XML CREATE + RETRIEVE + SEARCH
+-- if previously not available
+IF COL_LENGTH('Patient', 'MedicalHistory') IS NULL
+BEGIN
+    ALTER TABLE Patient ADD MedicalHistory XML;
+END;
 
---Ensure column exist if not at first
-Select * from Patient
-ALTER TABLE Patient ADD MedicalHistory XML;
-Select * from Patient
-
-CREATE PROCEDURE GetPatientXMLData
-    @Condition VARCHAR(100)
+-- generate xml
+CREATE PROCEDURE GetAllPatientsXML
 AS
 BEGIN
-    -- CREATE XML
+    SET NOCOUNT ON;
+
     SELECT 
         PatientID,
         FirstName,
         LastName
     FROM Patient
-    FOR XML PATH('Patient'), ROOT('Patients')
+    FOR XML PATH('Patient'), ROOT('Patients');
+END;
 
-    -- RETRIEVE + SEARCH XML
+--search xml 
+CREATE PROCEDURE SearchPatientByCondition
+    @Condition VARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
     SELECT 
         PatientID,
         FirstName + ' ' + LastName AS PatientName,
-        MedicalHistory.value('(History/Condition)[1]', 'VARCHAR(100)') AS Condition
+        MedicalHistory.value('(/History/Condition)[1]', 'VARCHAR(100)') AS Condition
     FROM Patient
-    WHERE MedicalHistory.exist('/History[Condition=sql:variable("@Condition")]') = 1
-END
---Execution
-EXEC GetPatientXMLData 'Diabetes'
-Select * from Patient
+    WHERE MedicalHistory IS NOT NULL
+      AND MedicalHistory.exist('/History[Condition=sql:variable("@Condition")]') = 1;
+END;
 
-
+--update xml 
 CREATE PROCEDURE UpdatePatientXML
     @PatientID INT,
     @NewCondition VARCHAR(100)
 AS
 BEGIN
+    SET NOCOUNT ON;
+
     -- Step 1: Initialize XML if NULL
     UPDATE Patient
-    SET MedicalHistory = 
-        '<History><Condition>None</Condition></History>'
+    SET MedicalHistory = '<History><Condition>None</Condition></History>'
     WHERE PatientID = @PatientID
       AND MedicalHistory IS NULL;
 
-    -- Step 2: Update XML
+    -- Step 2: Update existing condition safely
     UPDATE Patient
     SET MedicalHistory.modify(
         'replace value of (/History/Condition/text())[1] 
          with sql:variable("@NewCondition")'
     )
-    WHERE PatientID = @PatientID;
-END
+    WHERE PatientID = @PatientID
+      AND MedicalHistory.exist('/History/Condition') = 1;
+END;
 
---Update xml using execution 
-EXEC UpdatePatientXML 1, 'Asthma'
-SELECT * from Patient
+
+-- Generate XML
+EXEC GetAllPatientsXML;
+
+-- Search patients with condition
+EXEC SearchPatientByCondition 'Diabetes';
+
+-- Update patient condition
+EXEC UpdatePatientXML 1, 'Asthma';
+
+-- Verify result
+SELECT * FROM Patient;
